@@ -1,0 +1,305 @@
+﻿<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Flags :: virtual</title>
+</head>
+<body>
+
+    <h2>Flags control</h2>
+
+    <style type="text/css">
+
+        .page-content {
+            display: grid;
+            grid-template-columns: 1fr;
+            grid-template-rows: 50px 1fr;
+        }
+
+        .flags-container {
+            display: grid;
+            grid-template-columns: 100px 100px 100px 100px 100px;
+            grid-template-rows: 100px 10px 10px;
+            grid-column-gap: 10px;
+            grid-row-gap: 10px;
+            grid-column-gap: 4px;
+        }
+
+        .flag-holder {
+            /*display: grid-item;*/
+        }
+
+            .flag-holder .btn {
+                width: 100px;
+            }
+
+        .flag {
+            height: 100px;
+            background-size: 100px 100px;
+            cursor: help;
+        }
+
+        .flag-ready {
+            background-color: Green;
+            background-image: url("./flags-down.svg");
+        }
+
+        .flag-error {
+            background-color: OrangeRed;
+            background-image: url("./flags-error.svg");
+        }
+
+        .flag-active {
+            background-color: Blue;
+            background-image: url("./flag-up.svg");
+        }
+
+        .flag-undefined {
+            background-color: Gray;
+        }
+    </style>
+
+    <script type="text/javascript">
+
+        var urlBase = window.localStorage.getItem('urlBase'); // "https://localhost:5001/flags/";
+        const flagsPath = '/flags/';
+        const flagOn = "1";
+        const flagOff = "0";
+        const flagExt = "2";
+
+function $(id) {
+	return document.getElementById(id);
+}
+
+function createCORSRequest(method, url) {
+	let xhr = new XMLHttpRequest();
+	if ("withCredentials" in xhr) {
+		// Check if the XMLHttpRequest object has a "withCredentials" property.
+		// "withCredentials" only exists on XMLHTTPRequest2 objects.
+		xhr.open(method, url, true);
+	}
+	else if (typeof XDomainRequest != "undefined") {
+		// Otherwise, check if XDomainRequest.
+		// XDomainRequest only exists in IE, and is IE's way of making CORS requests.
+		xhr = new XDomainRequest();
+		xhr.open(method, url);
+	}
+	else {
+		// Otherwise, CORS is not supported by the browser.
+		xhr = null;
+	}
+	return xhr;
+}
+
+function setFlag(flagName, value) {
+	let url = urlBase + "set/" + flagName + "/" + value;
+	let xhr = createCORSRequest("GET", url);
+	if (!xhr) {
+		throw new Error('CORS not supported');
+	}
+
+	xhr.onreadystatechange = (e) => {
+		console.log("ready state change")
+	};
+
+	xhr.onprogress = (e) => {
+		console.log("load progress");
+	};
+
+	xhr.onerror = (e) => {
+		console.log("error");
+	};
+
+	xhr.onload = (e) => {
+		console.log("load");
+	};
+
+	xhr.ontimeout = (e) => {
+		console.log("timeout");
+	};
+
+	// following 3* not supported on IE's XDomainRequest
+	xhr.onabort = (e) => {
+		console.log("aborted");
+	};
+	xhr.onloadstart = (e) => {
+		console.log("load started");
+	};
+	xhr.onloadend = (e) => {
+		console.log("load end");
+	};
+
+	xhr.send();
+}
+
+function upflag(flagName) {
+	console.log(flagName, flagOn);
+	setFlag(flagName, flagOn);
+}
+
+function downflag(flagName) {
+	console.log(flagName, flagOff);
+	setFlag(flagName, flagOff);
+}
+
+function extflag(flagName) {
+	console.log(flagName, flagExt);
+	setFlag(flagName, flagExt);
+}
+
+var flagNames = [ "A", "B", "C", "D", "E" ];
+function checkFlags() {
+	console.log("check flags", flagNames);
+	for (let i in flagNames) {
+		let flagName = flagNames[i];
+		let url = urlBase + "list/" + flagName;
+		let xhr = createCORSRequest("GET", url);
+
+		if (!xhr) {
+			throw new Error('CORS not supported');
+		}
+		xhr.onreadystatechange = (e) => {
+			//console.log(xhr.responseText, e);
+			if (e.target.readyState === 4) {
+				//console.log(flagName + ": " + xhr.responseText);
+				updateFlag(flagName, xhr.responseText);
+			}
+		};
+		xhr.send();
+	}
+}
+
+function clearElementClasses(elementId) {
+	$(elementId).classList.remove("flag-undefined");
+	$(elementId).classList.remove("flag-ready");
+	$(elementId).classList.remove("flag-active");
+	$(elementId).classList.remove("flag-error");
+}
+function setElementClass(elementId, className) {
+	console.log("set " + elementId + " class to " + className);
+	clearElementClasses(elementId);
+	$(elementId).classList.add(className);
+}
+
+function updateFlag(name, value) {
+
+	//console.log("UPDATE " + name + " value to " + value + " of type " + typeof value);
+
+	let className;
+	switch (value) {
+		case "0":
+			className = "flag-ready";
+			break;
+		case "1":
+			className = "flag-active";
+			break;
+		case "2":
+			className = "flag-error";
+			break;
+		default:
+			className = "flag-undefined";
+			//console.error("WDYM flag-" + name + " = '" + value + "' of type " + typeof value + "?");
+			break;
+	}
+	setElementClass("flag" + name, className);
+}
+
+var timerHandle = null;
+function startService() {
+	if (timerHandle == null) {
+		timerHandle = window.setInterval(checkFlags, 1000);
+	}
+}
+function stopService() {
+	if (timerHandle != null) {
+		window.clearInterval(timerHandle);
+		timerHandle = null;
+
+		for (let i in flagNames) {
+			clearElementClasses("flag" + flagNames[i]);
+		}
+	}
+}
+
+window.addEventListener('load', (e) => {
+    urlBase = document.location.origin + flagsPath;
+    console.log(`Flags proxy endpoint: ${urlBase}`);
+});
+    </script>
+
+    <div class="page-content">
+        <div>
+            <button id="btnStartService" onclick="startService();">START</button>
+            <button id="btnStartService" onclick="stopService();">STOP</button>
+        </div>
+
+
+        <div class="flags-container">
+
+
+            <div class="flag-holder">
+                <div id="flagA" class="flag" title="Backend builds">
+                    A
+                </div>
+
+                <button class="btn" onclick="upflag('A');">&#9670; A |▲ </button>
+                <br>
+                <button class="btn" onclick="extflag('A');">&#9672; A |► </button>
+                <br>
+                <button class="btn" onclick="downflag('A');">&#9671; A |▼ </button>
+            </div>
+
+            <div class="flag-holder">
+                <div id="flagB" class="flag" title="Frontend builds">
+                    B
+                </div>
+
+                <button class="btn" onclick="upflag('B');">&#9670; B |▲ </button>
+                <br>
+                <button class="btn" onclick="extflag('B');">&#9672; B |► </button>
+                <br>
+                <button class="btn" onclick="downflag('B');">&#9671; B |▼ </button>
+            </div>
+
+            <div class="flag-holder">
+                <div id="flagC" class="flag" title="Deployment">
+                    C
+                </div>
+
+                <button class="btn" onclick="upflag('C');">&#9670; C |▲ </button>
+                <br>
+                <button class="btn" onclick="extflag('C');">&#9672; C |► </button>
+                <br>
+                <button class="btn" onclick="downflag('C');">&#9671; C |▼ </button>
+            </div>
+
+            <div class="flag-holder">
+                <div id="flagD" class="flag" title="Tests">
+                    D
+                </div>
+
+                <button class="btn" onclick="upflag('D');">&#9670; D |▲ </button>
+                <br>
+                <button class="btn" onclick="extflag('D');">&#9672; D |► </button>
+                <br>
+                <button class="btn" onclick="downflag('D');">&#9671; D |▼ </button>
+            </div>
+
+            <div class="flag-holder">
+
+                <div id="flagE" class="flag flag-undefined" title="Not used">
+                    E
+                </div>
+
+                <button class="btn" onclick="upflag('E');">&#9670; E |▲ </button>
+                <br>
+                <button class="btn" onclick="extflag('E');">&#9672; E |► </button>
+                <br>
+                <button class="btn" onclick="downflag('E');">&#9671; E |▼ </button>
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
+</html>
