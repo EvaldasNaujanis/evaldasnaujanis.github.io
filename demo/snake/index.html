@@ -1,0 +1,52 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Snake</title>
+    <style type="text/css">
+body {
+    padding: 0;
+}
+#divScore {
+    background: #333;
+    color: #EEE;
+    font-size: 12pt;
+    font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    border-radius: 3px;
+    min-height: 32px;
+}
+#divScore .score {
+    margin: 4px 8px;
+    padding: 4px 8px;
+}
+canvas {
+    margin: 0;
+    background: #000;
+    cursor: default;
+}
+    </style>
+</head>
+<body>
+    
+<div id="divScore">
+    <div class="score" style="float: right;">
+        <span>Highscore: </span>
+        <span id="txtHighscore">0</span>
+        <span>points</span>
+    </div>
+    <div class="score" style="float: left;">
+        <span>Score: </span>
+        <span id="txtScore">0</span>
+        <span>points</span>
+    </div>
+    <div style="clear: both;"></div>
+</div>
+<canvas id="TheCanvas"></canvas>
+
+
+<script type="text/javascript" src="./snake.js"></script>
+<script type="text/javascript" src="./food.js"></script>
+<script type="text/javascript" src="./game.js"></script>
+
+</body>
+</html>
