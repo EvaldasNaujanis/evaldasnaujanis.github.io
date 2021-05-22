@@ -10,6 +10,7 @@ var scale = 40;
 var food;
 var score = 0;
 var highscore = 0;
+var isSoundEnabled = false;
 
 const FPS = 5;
 var lastTimestamp = null;
@@ -33,8 +34,8 @@ function updateHighscore() {
 }
 
 
-function setup() {
-    snake = new Snake(scale, true);
+function setup(disableWalls) {
+    snake = new Snake(scale, disableWalls);
     food = new Food(snake, field, scale);
     food.spawn();
 }
@@ -43,8 +44,9 @@ function draw(timestamp) {
     requestAnimationFrame(draw);
     if (timestamp - lastTimestamp < 1000 / FPS) return;
     lastTimestamp = timestamp;
-    //console.log(timestamp);
-    
+    console.log(timestamp);
+    console.log(snake);
+
     ctx.fillStyle = '#FF0000';
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
@@ -55,6 +57,8 @@ function draw(timestamp) {
     }
     snake.update(field);
     if (snake.eat(food)) {
+        if (isSoundEnabled)
+            playSound();
         score++;
         updateScore();
         food.spawn(); 
@@ -85,12 +89,24 @@ function onKeyDown(e) {
     }
 }
 
+function onWallsModeChanged(e) {
+    const disableWalls = !e.target.checked;
+    snake = new Snake(scale, disableWalls);
+    score = 0;
+}
+
+function onSoundToggle(e) {
+    isSoundEnabled = e.target.checked;
+}
+
 window.addEventListener('load', (e) => {
-    
+
+    $('cbActivateWalls').addEventListener('change', onWallsModeChanged, false);
+    $('cbEnableSound').addEventListener('change', onSoundToggle, false);
+    isSoundEnabled = $('cbEnableSound').checked;
     document.addEventListener('keydown', onKeyDown, false);
     $('divScore').style.width = `${field.width}px`;
     updateHighscore();
-
-    setup();
+    setup(true);
     draw();
 }, true);
