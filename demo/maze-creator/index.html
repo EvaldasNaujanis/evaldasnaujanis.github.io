@@ -1,0 +1,99 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Maze Creator</title>
+    <link rel="shortcut icon" href="data:image/x-icon;base64,AAABAAEAEBAAAAAAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAQAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAtX19fU5ubm5WcnJydm5ubn5qamp+ZmZmhmZmZoZmZmaGZmZmhmpqan5ubm5+cnJydm5ublV9fX1MAAAAtampqS7+/v/fBwcH/wcHB/8HBwf/BwcH/wcHB/8HBwf/BwcH/wcHB/8HBwf/BwcH/wcHB/8HBwf+/v7/3ampqS6amponBwcH/wcHB/7m5uf+NjY3/gYGB/5+fn/+NjY3/rq6u/5qamv+AgID/gICA/4CAgP+AgID/s7Oz/6ampomsrKyPwcHB/6ysrP9OTk7/ampq/35+fv9TU1P/QEBA/5ubm/+ampr/gICA/4CAgP+AgID/gICA/7Ozs/+srKyPrq6ujb+/v/9eXl7/hYWF/8DAwP/BwcH/tLS0/0hISP+bm5v/wcHB/8DAwP/BwcH/wcHB/8HBwf/BwcH/rq6ujbCwsIuysrL/SUlJ/7a2tv/BwcH/wcHB/8HBwf9aWlr/m5ub/7Kysv98fHz/kZGR/5CQkP+QkJD/tra2/7CwsIuzs7OJsrKy/0lJSf+2trb/wcHB/8HBwf/AwMD/Wlpa/5ubm/+ysrL/WFhY/42Njf+Xl5f/l5eX/7e3t/+zs7OJtra2h7+/v/9eXl7/hoaG/8HBwf/BwcH/sLCw/0ZGRv+bm5v/pKSk/15eXv+9vb3/wMDA/8DAwP/AwMD/tra2h7e3t4fBwcH/ra2t/1BQUP9sbGz/fn5+/1NTU/9AQED/m5ub/729vf9nZ2f/bGxs/3Z2dv91dXX/rq6u/7e3t4e5ubmFwcHB/8HBwf+6urr/jY2N/4GBgf+fn5//Wlpa/5ubm/+rq6v/XV1d/66urv+0tLT/tLS0/729vf+5ubmFu7u7g8HBwf/BwcH/wcHB/8HBwf/BwcH/wcHB/1paWv+bm5v/q6ur/1paWv+jo6P/qKio/6ioqP+7u7v/u7u7g7y8vIPBwcH/wcHB/8HBwf/BwcH/wcHB/8HBwf9aWlr/m5ub/8DAwP+ampr/f39//4GBgf+BgYH/sbGx/7y8vIO+vr6BwcHB/8HBwf/BwcH/wcHB/8HBwf/BwcH/Z2dn/319ff/BwcH/wcHB/8HBwf/BwcH/wcHB/8HBwf++vr6Bvb29ecHBwf/BwcH/wcHB/8HBwf/BwcH/wcHB/7Ozs/+pqan/wcHB/8HBwf/BwcH/wcHB/8HBwf/BwcH/vb29ebi4uCvBwcH1wcHB/8HBwf/BwcH/wcHB/8HBwf/BwcH/wcHB/8HBwf/BwcH/wcHB/8HBwf/BwcH/wcHB9bi4uCsAAAADuLi4K7+/v3m/v7+Bv7+/gb+/v4G/v7+Bv7+/gb+/v4G/v7+Bv7+/gb+/v4G/v7+Bv7+/ebi4uCsAAAADAAD//wAA//8AAP//AAD//wAA//8AAP//AAD//wAA//8AAP//AAD//wAA//8AAP//AAD//wAA//8AAP//AAD//w==" />
+    <style type="text/css">
+body {
+    padding: 0;
+    background: rgb(2,0,36);
+    background: radial-gradient(circle, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 55%, rgba(0,212,255,1) 100%);
+}
+
+.maze-form {
+    background: rgb(255,255,255);
+    background: linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(255,255,255,1) 60%, rgba(240,244,206,0.7959558823529411) 100%);
+    border-radius: 5px;
+    padding: 12px;
+    width: 400px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.maze-form b {
+    font-weight: bold;
+    font-size: 16pt;
+}
+.maze-form .property {
+    display: flex;
+    flex-direction: row;
+    margin-top: 8px;
+    margin-bottom: 8px;
+}
+.maze-form label {
+    flex: 1;
+    padding-right: 8px;
+    width: 150px;
+    text-align: right;
+    display: inline-block;
+    font-weight: bold;
+    font-size: 12pt;
+    
+}
+.maze-form input {
+    flex: 2;
+    width: 200px;
+}
+
+.maze-form button {
+    flex: 3;
+    font-size: 14pt;
+}
+
+.canvas-content {
+    padding: 12px;
+    text-align: center;
+}
+
+canvas {
+    background: #000;
+    cursor: default;
+}
+    </style>
+</head>
+<body>
+
+<div class="maze-form">
+
+    <h1>Maze Creator</h1>
+    <form>
+        <b>Maze properties:</b> <br>
+        
+        <div class="property">
+            <label for="txtWidth">Width: </label>
+            <input type="text" name="txtWidth" id="txtWidth">
+        </div>
+        <div class="property">
+            <label for="txtHeight">Heigh: </label>
+            <input type="text" name="txtHeight" id="txtHeight">
+        </div>
+        
+        <div class="property">
+            <button type="button" id="btnGenerate">Generate</button>
+        </div>
+        
+    </form>
+</div>
+
+<div class="canvas-content">
+    <canvas id="TheCanvas"></canvas>
+</div>
+
+<script type="text/javascript" src="./cell.js"></script>
+<script type="text/javascript" src="./maze.js"></script>
+<script type="text/javascript" src="./maze-creator.js"></script>
+
+</body>
+</html>
